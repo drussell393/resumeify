@@ -306,3 +306,75 @@ class DatabaseModel
             return 'There\'s an error with your code. We don\'t expect you to pass both $skill_category and $skill_name';
         }
     }
+    /**
+     * Get all work experience, and order them by year started, except where year ended is 0.
+     *
+     * In order to get the "Present" job on top, this method looks to ensure if the end_year
+     * value is 0, it will be added to the top of the list.
+     *
+     * @return array of work experience results
+     * @access public
+     * @since Method available since Release 1.0.0
+     */
+    public function getWorkExperience()
+    {
+        global $conn;
+        if (!isset($conn))
+        {
+            $this->connect();
+        }
+
+        $query = 'SELECT year_start, year_end, company_name, company_description, official_title, daily_duties, extra_duties, featured_duties, awards, takeaways
+                  FROM work_experience
+                  ORDER BY year_start';
+        $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        if ($sth->execute())
+        {
+            $new_array = array();
+            $work_experience_array = $sth->fetchAll();
+            foreach ($work_experience_array as $work_experience)
+            {
+                if ($work_experience['year_end'] == 0)
+                {
+                    array_unshift($new_array, $work_experience);
+                }
+                else
+                {
+                    $new_array[] = $work_experience;
+                }
+            }
+            return $new_array;
+        }
+        else
+        {
+            return 'No work experience found.';
+        }
+    }
+    /**
+     * Get all volunteer experience, and order them by year started
+     *
+     * @return array of volunteer experience results
+     * @access public
+     * @since Method available since Release 1.0.0
+     */
+    public function getVolunteerExperience()
+    {
+        global $conn;
+        if (!isset($conn))
+        {
+            $this->connect();
+        }
+
+        $query = 'SELECT year_start, year_end, organisation_name, organisation_description, daily_duties, extra_duties, featured_duties, awards, takeaways
+                  FROM volunteer_experience
+                  ORDER BY year_start';
+        $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        if ($sth->execute())
+        {
+            return $sth->fetchAll();
+        }
+        else
+        {
+            return 'Oops, there\'s no volunteer data in the database.';
+        }
+    }

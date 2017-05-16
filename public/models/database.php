@@ -252,7 +252,7 @@ class DatabaseModel
 
         if (is_null($language_name) && is_null($category_id))
         {
-            $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
+            $query = 'SELECT field_name, experience, experience_level, icon, language_categories.category_name
                       FROM languages
                       RIGHT JOIN language_categories
                       ON languages.category = language_categories.id';
@@ -268,7 +268,7 @@ class DatabaseModel
         }
         else if (is_null($language_name) && !is_null($category_id))
         {
-            $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
+            $query = 'SELECT field_name, experience, experience_level, icon, language_categories.category_name
                       FROM languages
                       RIGHT JOIN language_categories
                       ON languages.category = language_categories.id
@@ -285,7 +285,7 @@ class DatabaseModel
         }
         else if (!is_null($language_name) && is_null($category_id))
         {
-            $query = 'SELECT field_name, experience_level, icon, skills_categories.category_name
+            $query = 'SELECT field_name, experience_level, icon, language_categories.category_name
                       FROM languages
                       RIGHT JOIN skills_categories
                       ON languages.category = language_categories.id

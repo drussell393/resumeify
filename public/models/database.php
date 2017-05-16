@@ -17,8 +17,6 @@
  * @since File available since Release 1.0.0
  */
 
-namespace models\Database;
-
 class DatabaseModel
 {
     /**
@@ -37,12 +35,12 @@ class DatabaseModel
                 $conn = new PDO('mysql:host=' . $config['mysql_hostname'] . ';dbname=' . $config['mysql_database'] . ';', $config['mysql_user'], $config['mysql_password']);
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }
-        }
-        catch (PDOException $e)
-        {
-            error_log($e->getMessage());
-            print 'We were unable to connect to the database. Please check your error logs.';
-            die();
+            catch (PDOException $e)
+            {
+                error_log($e->getMessage());
+                print 'We were unable to connect to the database. Please check your error logs.';
+                die();
+            }
         }
     }
     /**

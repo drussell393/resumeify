@@ -378,3 +378,4 @@ class DatabaseModel
             return 'Oops, there\'s no volunteer data in the database.';
         }
     }
+}

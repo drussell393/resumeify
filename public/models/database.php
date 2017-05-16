@@ -263,7 +263,7 @@ class DatabaseModel
             }
             else
             {
-                return 'Oops, no skills found.';
+                return 'Oops, no languages found.';
             }
         }
         else if (is_null($language_name) && !is_null($category_id))
@@ -271,23 +271,24 @@ class DatabaseModel
             $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
                       FROM languages
                       RIGHT JOIN language_categories
+                      ON languages.category = language_categories.id
                       WHERE languages.category = :language_category';
             $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-            if ($sth->execute(array(':languages_category' => $language_category)))
+            if ($sth->execute(array(':language_category' => $category_id)))
             {
                 return $sth->fetchAll();
             }
             else
             {
-                return 'Oops, no skills in this category.';
+                return 'Oops, no languages in this category.';
             }
         }
         else if (!is_null($language_name) && is_null($category_id))
         {
             $query = 'SELECT field_name, experience_level, icon, skills_categories.category_name
-                      FROM skills
+                      FROM languages
                       RIGHT JOIN skills_categories
-                      ON skills.category = skills_categories.id
+                      ON languages.category = language_categories.id
                       WHERE languages.field_name = :language_name';
             $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             if ($sth->execute(array(':language_name' => $language_name)))
@@ -296,12 +297,12 @@ class DatabaseModel
             }
             else
             {
-                return 'Oops, there\'s no skill with that name';
+                return 'Oops, there\'s no language with that name';
             }
         }
         else
         {
-            return 'There\'s an error with your code. We don\'t expect you to pass both $skill_category and $skill_name';
+            return 'There\'s an error with your code. We don\'t expect you to pass both $category_id and $language_name';
         }
     }
     /**

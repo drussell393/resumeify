@@ -94,6 +94,33 @@ class DatabaseModel
         }
     }
     /**
+     * getSkillCategories() gets all skill categories in the database
+     *
+     * @return array of skill categories from db table 'skills_categories'
+     * @access public
+     * @since Method avalable since Release 1.0.0
+     */
+    public function getSkillCategories()
+    {
+        global $conn;
+        if (!isset($conn))
+        {
+            $this->connect();
+        }
+
+        $query = 'SELECT id, category_name
+                  FROM skills_categories';
+        $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        if ($sth->execute())
+        {
+            return $sth->fetchAll();
+        }
+        else
+        {
+            return 'There\'s no skill categories.';
+        }
+    }
+    /**
      * Pulls in 'skills' from the database
      *
      * The getSkills() function allows pulling in the "skills" from the database
@@ -121,7 +148,7 @@ class DatabaseModel
 
         if (is_null($skill_name) && is_null($skill_category))
         {
-            $query = 'SELECT field_name, experience_level, icon, skills_categories.category_name
+            $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
                       FROM skills
                       RIGHT JOIN skills_categories
                       ON skills.category = skills_categories.id';
@@ -137,7 +164,7 @@ class DatabaseModel
         }
         else if (is_null($skill_name) && !is_null($skill_category))
         {
-            $query = 'SELECT field_name, experience_level, icon, skills_categories.category_name
+            $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
                       FROM skills
                       RIGHT JOIN skills_categories
                       ON skills.category = skills_categories.id
@@ -154,7 +181,7 @@ class DatabaseModel
         }
         else if (!is_null($skill_name) && is_null($skill_category))
         {
-            $query = 'SELECT field_name, experience_level, icon, skills_categories.category_name
+            $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
                       FROM skills
                       RIGHT JOIN skills_categories
                       ON skills.category = skills_categories.id
@@ -175,13 +202,13 @@ class DatabaseModel
         }
     }
     /**
-     * getSkillCategories() gets all skill categories in the database
+     * getLanguageCategories() gets all language categories from the database (coding languages)
      *
-     * @return array of skill categories from db table 'skills_categories'
+     * @return array of language categories
      * @access public
-     * @since Method avalable since Release 1.0.0
+     * @since Method available since Release 1.0.0
      */
-    public function getSkillCategories()
+    public function getLanguageCategories()
     {
         global $conn;
         if (!isset($conn))
@@ -190,7 +217,7 @@ class DatabaseModel
         }
 
         $query = 'SELECT id, category_name
-                  FROM skills_categories';
+                  FROM language_categories';
         $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         if ($sth->execute())
         {
@@ -198,6 +225,83 @@ class DatabaseModel
         }
         else
         {
-            return 'There\'s no skill categories.';
+            return 'Oops, no language categories found in the database.';
+        }
+    }
+    /**
+     * getLanguages() will get all languages from the database (coding languages)
+     *
+     * The method allows for pulling three different results:
+     *
+     *   + pull by the category of the language
+     *   + pull by the language name (field_name in the table)
+     *   + pull all languages
+     *
+     * @param string $category_name language category to pull (optional)
+     * @param string $language_name language to pull from database (optional)
+     * @access public
+     * @return array with language information
+     * @since Method available since Release 1.0.0
+     */
+    public function getLanguages($category_name = NULL, $language_name = NULL)
+    {
+        global $conn;
+        if (!isset($conn))
+        {
+            $this->connect();
+        }
+
+        if (is_null($language_name) && is_null($category_name))
+        {
+            $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
+                      FROM languages
+                      RIGHT JOIN language_categories
+                      ON languages.category = language_categories.id';
+            $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+            if ($sth->execute())
+            {
+                return $sth->fetchAll();
+            }
+            else
+            {
+                return 'Oops, no skills found.';
+            }
+        }
+        else if (is_null($language_name) && !is_null($category_name))
+        {
+            $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
+                      FROM languages
+                      RIGHT JOIN language_categories
+                      WHERE languages.category = :language_category';
+            $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+            if ($sth->execute(array(':languages_category' => $language_category)))
+            {
+                return $sth->fetchAll();
+            }
+            else
+            {
+                return 'Oops, no skills in this category.';
+            }
+        }
+        else if (!is_null($language_name) && is_null($category_name))
+        {
+            $query = 'SELECT field_name, experience_level, icon, skills_categories.category_name
+                      FROM skills
+                      RIGHT JOIN skills_categories
+                      ON skills.category = skills_categories.id
+                      WHERE languages.field_name = :language_name';
+            $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+            if ($sth->execute(array(':language_name' => $language_name)))
+            {
+                return $sth->fetch();
+            }
+            else
+            {
+                return 'Oops, there\'s no skill with that name';
+            }
+        }
+        else
+        {
+            return 'There\'s an error with your code. We don\'t expect you to pass both $skill_category and $skill_name';
         }
     }

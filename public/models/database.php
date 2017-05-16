@@ -66,7 +66,8 @@ class DatabaseModel
         if (is_null($field_name))
         {
             $query = 'SELECT field_name, value, icon, priority
-                      FROM personal_details';
+                      FROM personal_details
+                      ORDER BY priority';
             $sth = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             if ($sth->execute())
             {

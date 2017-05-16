@@ -236,13 +236,13 @@ class DatabaseModel
      *   + pull by the language name (field_name in the table)
      *   + pull all languages
      *
-     * @param string $category_name language category to pull (optional)
+     * @param string $category_id language category to pull (optional)
      * @param string $language_name language to pull from database (optional)
      * @access public
      * @return array with language information
      * @since Method available since Release 1.0.0
      */
-    public function getLanguages($category_name = NULL, $language_name = NULL)
+    public function getLanguages($category_id = NULL, $language_name = NULL)
     {
         global $conn;
         if (!isset($conn))
@@ -250,7 +250,7 @@ class DatabaseModel
             $this->connect();
         }
 
-        if (is_null($language_name) && is_null($category_name))
+        if (is_null($language_name) && is_null($category_id))
         {
             $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
                       FROM languages
@@ -266,7 +266,7 @@ class DatabaseModel
                 return 'Oops, no skills found.';
             }
         }
-        else if (is_null($language_name) && !is_null($category_name))
+        else if (is_null($language_name) && !is_null($category_id))
         {
             $query = 'SELECT field_name, experience, experience_level, icon, skills_categories.category_name
                       FROM languages
@@ -282,7 +282,7 @@ class DatabaseModel
                 return 'Oops, no skills in this category.';
             }
         }
-        else if (!is_null($language_name) && is_null($category_name))
+        else if (!is_null($language_name) && is_null($category_id))
         {
             $query = 'SELECT field_name, experience_level, icon, skills_categories.category_name
                       FROM skills
